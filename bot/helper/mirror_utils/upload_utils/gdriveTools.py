@@ -435,16 +435,34 @@ class GoogleDriveHelper:
         for file in response.get('files', []):
             if file.get(
                     'mimeType') == "application/vnd.google-apps.folder":  # Detect Whether Current Entity is a Folder or File.
-                msg += f"⁍ <a href='https://drive.google.com/drive/folders/{file.get('id')}'>{file.get('name')}" \
+                r = requests.get(
+                        'https://shrinkme.io/api?api=826ea316e7a34f7ecca236373b823448f8747309&url=' + 'https://drive.google.com/drive/folders/'+file.get('id')).text
+                y = json.loads(r)
+                url = y['shortenedUrl']
+                msg += f"⁍ <a href={url}>{file.get('name')}" \
                        f"</a> (folder)"
                 if INDEX_URL is not None:
                     url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}/')
+                    url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}/')
+                    r = requests.get(
+                        'https://shrinkme.io/api?api=826ea316e7a34f7ecca236373b823448f8747309&url=' + url).text
+                    y = json.loads(r)
+                    url = y['shortenedUrl']
                     msg += f' | <a href="{url}"> Index URL</a>'
             else:
-                msg += f"⁍ <a href='https://drive.google.com/uc?id={file.get('id')}" \
-                       f"&export=download'>{file.get('name')}</a> ({get_readable_file_size(int(file.get('size')))})"
+                url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}/')
+                r = requests.get(
+                        'https://shrinkme.io/api?api=826ea316e7a34f7ecca236373b823448f8747309&url=' + 'https://drive.google.com/uc?id='+file.get('id')+'&export=download').text
+                y = json.loads(r)
+                url = y['shortenedUrl']
+                msg += f"⁍ <a href={url}>{file.get('name')}</a> ({get_readable_file_size(int(file.get('size')))})"
                 if INDEX_URL is not None:
                     url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}')
+                    url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}/')
+                    r = requests.get(
+                        'https://shrinkme.io/api?api=826ea316e7a34f7ecca236373b823448f8747309&url=' + url).text
+                    y = json.loads(r)
+                    url = y['shortenedUrl']
                     msg += f' | <a href="{url}"> Index URL</a>'
             msg += '\n'
         return msg
